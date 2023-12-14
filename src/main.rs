@@ -1,17 +1,27 @@
-use std::{
-    io,
-};
+mod input;
+mod number;
+
+use std::cmp::Ordering;
 
 fn main() {
     println!("Guess the number!");
 
-    println!("Please input your guess.");
+    let secret_number = number::create_random_number();
 
-    let mut guess = String::new();
+    loop {
+        let guess = match input::get_user_input("Please input your guess.") {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
 
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("Failed to read line");
-
-    println!("You guessed: {guess}");
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("Too small!"),
+            Ordering::Greater => println!("Too big!"),
+            Ordering::Equal => {
+                println!("You guessed the number: {}", secret_number);
+                println!("You win!");
+                break;
+            }
+        }
+    }
 }
